@@ -41,6 +41,7 @@ export class MissingSupabaseConfigError extends Error {
 }
 
 const DEFAULT_SUPABASE_URL = 'https://hpbjxknfyexhfwktnpyb.supabase.co';
+const DEFAULT_PUBLIC_KEY = 'sb_publishable_5J6xtVtD9cYVTFdpO2QR4Q_yb0tVCqO';
 
 function readServerEnv(name: string): string | undefined {
   return typeof process === 'undefined' ? undefined : process.env[name];
@@ -49,24 +50,21 @@ function readServerEnv(name: string): string | undefined {
 export function getSupabaseConfig():
   | { ok: true; url: string; key: string }
   | { ok: false; missing: string[] } {
-  // VITE_* is read first in the browser. SUPABASE_* remains available for SSR.
   const url =
     import.meta.env['VITE_SUPABASE_URL'] || readServerEnv('SUPABASE_URL') || DEFAULT_SUPABASE_URL;
   const key =
-    readServerEnv('SUPABASE_ANON_KEY') ||
     import.meta.env['VITE_SUPABASE_ANON_KEY'] ||
-    import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] ||
-    readServerEnv('SUPABASE_PUBLISHABLE_KEY');
+    import.meta.env['PUBLIC_KEY'] ||
+    readServerEnv('PUBLIC_KEY') ||
+    DEFAULT_PUBLIC_KEY;
 
   if (!key) {
-    return {
-      ok: false,
-      missing: ['SUPABASE_ANON_KEY'],
-    };
+    return { ok: false, missing: ['PUBLIC_KEY'] };
   }
 
   return { ok: true, url, key };
 }
+
 
 function createSupabaseClient() {
   const config = getSupabaseConfig();
