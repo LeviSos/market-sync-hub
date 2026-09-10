@@ -23,7 +23,11 @@ function env(name: string): string | undefined {
   return value && value.trim() !== "" ? value.trim() : undefined;
 }
 
-export function resolveAdminCredentials(): { url?: string; key?: string; missing: string[] } {
+export function resolveAdminCredentials(): {
+  url: string | undefined;
+  key: string | undefined;
+  missing: string[];
+} {
   let url = URL_NAMES.map(env).find(Boolean);
   if (!url) {
     const projectId = env("SUPABASE_PROJECT_ID") ?? env("VITE_SUPABASE_PROJECT_ID");
