@@ -9,7 +9,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { loose } from "@/lib/supabase-loose";
 
-const SKINS_URL = "https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en/skins.json";
+const SKINS_URL =
+  "https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en/skins.json";
 
 const MAX_ITEMS = 600;
 const CATALOGUE_TIMEOUT_MS = 20_000;

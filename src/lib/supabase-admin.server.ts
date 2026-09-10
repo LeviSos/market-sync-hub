@@ -34,10 +34,7 @@ export function resolveAdminCredentials(): {
     if (projectId) url = `https://${projectId}.supabase.co`;
   }
   const key = KEY_NAMES.map(env).find(Boolean);
-  const missing = [
-    ...(url ? [] : ["SUPABASE_URL"]),
-    ...(key ? [] : ["SUPABASE_SERVICE_ROLE_KEY"]),
-  ];
+  const missing = [...(url ? [] : ["SUPABASE_URL"]), ...(key ? [] : ["SUPABASE_SERVICE_ROLE_KEY"])];
   return { url, key, missing };
 }
 

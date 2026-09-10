@@ -58,7 +58,10 @@ async function getJson<T>(url: string): Promise<T> {
       if (!res.ok) throw new Error(`Market responded with ${res.status}`);
       return (await res.json()) as T;
     } catch (error) {
-      if (error instanceof Error && (error.name === "AbortError" || error.name === "TimeoutError")) {
+      if (
+        error instanceof Error &&
+        (error.name === "AbortError" || error.name === "TimeoutError")
+      ) {
         throw new Error(MARKET_TIMEOUT);
       }
       throw error;
@@ -177,7 +180,13 @@ export async function fetchFullExport(currency: Currency = "USD", maxChunks = 3)
       if (!name || price <= 0) continue;
       const existing = offers.get(name);
       if (existing && existing.price <= price) continue;
-      offers.set(name, { marketHashName: name, price, buyOrder: null, avgPrice: null, volume: null });
+      offers.set(name, {
+        marketHashName: name,
+        price,
+        buyOrder: null,
+        avgPrice: null,
+        volume: null,
+      });
     }
   }
   return [...offers.values()];

@@ -73,8 +73,7 @@ async function fetchSteamProfile(steamId: string): Promise<SteamProfile> {
 }
 
 type SessionTokenResult =
-  | { tokenHash: string; error?: never }
-  | { tokenHash?: never; error: string };
+  { tokenHash: string; error?: never } | { tokenHash?: never; error: string };
 
 /** Creates (or refreshes) the Supabase account for this Steam id and returns a one-time login token. */
 async function createSupabaseSession(
@@ -215,7 +214,9 @@ export const Route = createFileRoute("/api/public/auth/steam/callback")({
 
         // 2. SteamID64 comes from the claimed identifier.
         const claimed =
-          url.searchParams.get("openid.claimed_id") ?? url.searchParams.get("openid.identity") ?? "";
+          url.searchParams.get("openid.claimed_id") ??
+          url.searchParams.get("openid.identity") ??
+          "";
         const steamId = /(\d{17})\/?$/.exec(claimed)?.[1];
         if (!steamId) return fail(origin, "Steam did not return an account id");
 
