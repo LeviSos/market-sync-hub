@@ -156,6 +156,12 @@ async function createSupabaseSession(
     }
     if (linkError) {
       console.error("[Steam auth] generateLink failed", linkError.message);
+      if (/invalid api key/i.test(linkError.message)) {
+        return {
+          error:
+            "The backend admin key is rejected by the database (invalid or rotated). Update CASEFORGE_BACKEND_ADMIN_KEY with the current service role key of this project.",
+        };
+      }
       return { error: `Could not generate a secure sign-in link: ${linkError.message}` };
     }
 
