@@ -11,6 +11,12 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { Header } from "@/components/site/Header";
+import { LiveDrops } from "@/components/site/LiveDrops";
+import { ChatWidget } from "@/components/site/ChatWidget";
+import { Toaster } from "@/components/ui/sonner";
+import { I18nProvider, LanguageSwitcher, useT } from "@/lib/i18n";
+import { captureSteamUserFromUrl } from "@/lib/steam-auth";
 
 function NotFoundComponent() {
   return (
@@ -77,19 +83,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "CaseForge — CS2 case opening" },
+      {
+        name: "description",
+        content:
+          "Open CS2 cases with provably fair rolls, collect skins and sell them back instantly.",
+      },
+      { property: "og:title", content: "CaseForge — CS2 case opening" },
+      {
+        property: "og:description",
+        content:
+          "Open CS2 cases with provably fair rolls, collect skins and sell them back instantly.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: appCss,
+        href: "https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap",
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
@@ -117,10 +132,71 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  // Steam OpenID can land on any page: pick the identity up from the URL,
+  // store it and clean the address bar so the header updates immediately.
+  useEffect(() => {
+    captureSteamUserFromUrl();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <I18nProvider>
+        <Header />
+
+        <LiveDrops />
+        <div className="lg:pl-[180px]">
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+          <SiteFooter />
+        </div>
+        <ChatWidget />
+        <Toaster position="top-center" />
+      </I18nProvider>
     </QueryClientProvider>
+  );
+}
+
+function SiteFooter() {
+  const t = useT();
+  const link = "transition-colors hover:text-foreground";
+  return (
+    <footer className="mt-16 border-t border-border py-10 text-xs uppercase tracking-widest text-muted-foreground">
+      <div className="mx-auto flex max-w-5xl flex-col items-center gap-8 px-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="text-center sm:text-left">
+          <div className="font-display text-base font-bold text-foreground">CaseForge</div>
+          <div className="mt-2">{t("footer.tagline")}</div>
+        </div>
+
+        <nav className="flex flex-col items-center gap-3 sm:items-start">
+          <div className="font-bold text-foreground">{t("footer.general")}</div>
+          <Link to="/terms" className={link} activeProps={{ className: "font-bold text-primary" }}>
+            {t("footer.terms")}
+          </Link>
+          <Link
+            to="/privacy"
+            className={link}
+            activeProps={{ className: "font-bold text-primary" }}
+          >
+            {t("footer.privacy")}
+          </Link>
+          <Link
+            to="/cookie-policy"
+            className={link}
+            activeProps={{ className: "font-bold text-primary" }}
+          >
+            {t("footer.cookies")}
+          </Link>
+          <a
+            href="https://t.me/dollar20trc"
+            target="_blank"
+            rel="noreferrer"
+            className={link}
+          >
+            {t("footer.support")}
+          </a>
+          <LanguageSwitcher className="mt-2" />
+        </nav>
+      </div>
+    </footer>
   );
 }

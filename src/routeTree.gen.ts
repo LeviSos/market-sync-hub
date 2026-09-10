@@ -10,33 +10,233 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ContractsRouteImport } from './routes/contracts'
+import { Route as CookiePolicyRouteImport } from './routes/cookie-policy'
+import { Route as FairRouteImport } from './routes/fair'
+import { Route as InventoryRouteImport } from './routes/inventory'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as UpgradeRouteImport } from './routes/upgrade'
+import { Route as AuthCompleteRouteImport } from './routes/auth.complete'
+import { Route as BattlesIndexRouteImport } from './routes/battles.index'
+import { Route as BattlesIdRouteImport } from './routes/battles.$id'
+import { Route as CaseSlugRouteImport } from './routes/case.$slug'
+import { Route as ApiPublicAuthSteamCallbackRouteImport } from './routes/api/public/auth/steam/callback'
+import { Route as ApiPublicAuthSteamLoginRouteImport } from './routes/api/public/auth/steam/login'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContractsRoute = ContractsRouteImport.update({
+  id: '/contracts',
+  path: '/contracts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiePolicyRoute = CookiePolicyRouteImport.update({
+  id: '/cookie-policy',
+  path: '/cookie-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FairRoute = FairRouteImport.update({
+  id: '/fair',
+  path: '/fair',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InventoryRoute = InventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UpgradeRoute = UpgradeRouteImport.update({
+  id: '/upgrade',
+  path: '/upgrade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCompleteRoute = AuthCompleteRouteImport.update({
+  id: '/auth/complete',
+  path: '/auth/complete',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BattlesIndexRoute = BattlesIndexRouteImport.update({
+  id: '/battles/',
+  path: '/battles/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BattlesIdRoute = BattlesIdRouteImport.update({
+  id: '/battles/$id',
+  path: '/battles/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CaseSlugRoute = CaseSlugRouteImport.update({
+  id: '/case/$slug',
+  path: '/case/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAuthSteamCallbackRoute =
+  ApiPublicAuthSteamCallbackRouteImport.update({
+    id: '/api/public/auth/steam/callback',
+    path: '/api/public/auth/steam/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicAuthSteamLoginRoute = ApiPublicAuthSteamLoginRouteImport.update({
+  id: '/api/public/auth/steam/login',
+  path: '/api/public/auth/steam/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/contracts': typeof ContractsRoute
+  '/cookie-policy': typeof CookiePolicyRoute
+  '/fair': typeof FairRoute
+  '/inventory': typeof InventoryRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
+  '/terms': typeof TermsRoute
+  '/upgrade': typeof UpgradeRoute
+  '/auth/complete': typeof AuthCompleteRoute
+  '/battles/$id': typeof BattlesIdRoute
+  '/case/$slug': typeof CaseSlugRoute
+  '/battles/': typeof BattlesIndexRoute
+  '/api/public/auth/steam/callback': typeof ApiPublicAuthSteamCallbackRoute
+  '/api/public/auth/steam/login': typeof ApiPublicAuthSteamLoginRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/contracts': typeof ContractsRoute
+  '/cookie-policy': typeof CookiePolicyRoute
+  '/fair': typeof FairRoute
+  '/inventory': typeof InventoryRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
+  '/terms': typeof TermsRoute
+  '/upgrade': typeof UpgradeRoute
+  '/auth/complete': typeof AuthCompleteRoute
+  '/battles/$id': typeof BattlesIdRoute
+  '/case/$slug': typeof CaseSlugRoute
+  '/battles': typeof BattlesIndexRoute
+  '/api/public/auth/steam/callback': typeof ApiPublicAuthSteamCallbackRoute
+  '/api/public/auth/steam/login': typeof ApiPublicAuthSteamLoginRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/contracts': typeof ContractsRoute
+  '/cookie-policy': typeof CookiePolicyRoute
+  '/fair': typeof FairRoute
+  '/inventory': typeof InventoryRoute
+  '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
+  '/terms': typeof TermsRoute
+  '/upgrade': typeof UpgradeRoute
+  '/auth/complete': typeof AuthCompleteRoute
+  '/battles/$id': typeof BattlesIdRoute
+  '/case/$slug': typeof CaseSlugRoute
+  '/battles/': typeof BattlesIndexRoute
+  '/api/public/auth/steam/callback': typeof ApiPublicAuthSteamCallbackRoute
+  '/api/public/auth/steam/login': typeof ApiPublicAuthSteamLoginRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/contracts'
+    | '/cookie-policy'
+    | '/fair'
+    | '/inventory'
+    | '/privacy'
+    | '/profile'
+    | '/terms'
+    | '/upgrade'
+    | '/auth/complete'
+    | '/battles/$id'
+    | '/case/$slug'
+    | '/battles/'
+    | '/api/public/auth/steam/callback'
+    | '/api/public/auth/steam/login'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/contracts'
+    | '/cookie-policy'
+    | '/fair'
+    | '/inventory'
+    | '/privacy'
+    | '/profile'
+    | '/terms'
+    | '/upgrade'
+    | '/auth/complete'
+    | '/battles/$id'
+    | '/case/$slug'
+    | '/battles'
+    | '/api/public/auth/steam/callback'
+    | '/api/public/auth/steam/login'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/contracts'
+    | '/cookie-policy'
+    | '/fair'
+    | '/inventory'
+    | '/privacy'
+    | '/profile'
+    | '/terms'
+    | '/upgrade'
+    | '/auth/complete'
+    | '/battles/$id'
+    | '/case/$slug'
+    | '/battles/'
+    | '/api/public/auth/steam/callback'
+    | '/api/public/auth/steam/login'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  ContractsRoute: typeof ContractsRoute
+  CookiePolicyRoute: typeof CookiePolicyRoute
+  FairRoute: typeof FairRoute
+  InventoryRoute: typeof InventoryRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ProfileRoute: typeof ProfileRoute
+  TermsRoute: typeof TermsRoute
+  UpgradeRoute: typeof UpgradeRoute
+  AuthCompleteRoute: typeof AuthCompleteRoute
+  BattlesIdRoute: typeof BattlesIdRoute
+  CaseSlugRoute: typeof CaseSlugRoute
+  BattlesIndexRoute: typeof BattlesIndexRoute
+  ApiPublicAuthSteamCallbackRoute: typeof ApiPublicAuthSteamCallbackRoute
+  ApiPublicAuthSteamLoginRoute: typeof ApiPublicAuthSteamLoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +248,131 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contracts': {
+      id: '/contracts'
+      path: '/contracts'
+      fullPath: '/contracts'
+      preLoaderRoute: typeof ContractsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookie-policy': {
+      id: '/cookie-policy'
+      path: '/cookie-policy'
+      fullPath: '/cookie-policy'
+      preLoaderRoute: typeof CookiePolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fair': {
+      id: '/fair'
+      path: '/fair'
+      fullPath: '/fair'
+      preLoaderRoute: typeof FairRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inventory': {
+      id: '/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof InventoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/upgrade': {
+      id: '/upgrade'
+      path: '/upgrade'
+      fullPath: '/upgrade'
+      preLoaderRoute: typeof UpgradeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/complete': {
+      id: '/auth/complete'
+      path: '/auth/complete'
+      fullPath: '/auth/complete'
+      preLoaderRoute: typeof AuthCompleteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/battles/': {
+      id: '/battles/'
+      path: '/battles'
+      fullPath: '/battles/'
+      preLoaderRoute: typeof BattlesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/battles/$id': {
+      id: '/battles/$id'
+      path: '/battles/$id'
+      fullPath: '/battles/$id'
+      preLoaderRoute: typeof BattlesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/case/$slug': {
+      id: '/case/$slug'
+      path: '/case/$slug'
+      fullPath: '/case/$slug'
+      preLoaderRoute: typeof CaseSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/auth/steam/callback': {
+      id: '/api/public/auth/steam/callback'
+      path: '/api/public/auth/steam/callback'
+      fullPath: '/api/public/auth/steam/callback'
+      preLoaderRoute: typeof ApiPublicAuthSteamCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/auth/steam/login': {
+      id: '/api/public/auth/steam/login'
+      path: '/api/public/auth/steam/login'
+      fullPath: '/api/public/auth/steam/login'
+      preLoaderRoute: typeof ApiPublicAuthSteamLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  ContractsRoute: ContractsRoute,
+  CookiePolicyRoute: CookiePolicyRoute,
+  FairRoute: FairRoute,
+  InventoryRoute: InventoryRoute,
+  PrivacyRoute: PrivacyRoute,
+  ProfileRoute: ProfileRoute,
+  TermsRoute: TermsRoute,
+  UpgradeRoute: UpgradeRoute,
+  AuthCompleteRoute: AuthCompleteRoute,
+  BattlesIdRoute: BattlesIdRoute,
+  CaseSlugRoute: CaseSlugRoute,
+  BattlesIndexRoute: BattlesIndexRoute,
+  ApiPublicAuthSteamCallbackRoute: ApiPublicAuthSteamCallbackRoute,
+  ApiPublicAuthSteamLoginRoute: ApiPublicAuthSteamLoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
