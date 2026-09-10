@@ -18,9 +18,9 @@ const KEY_NAMES = [
 
 const URL_NAMES = ["SUPABASE_URL", "VITE_SUPABASE_URL"] as const;
 
-// Last-resort defaults so the project keeps working when no env vars are set.
+// The project URL is public; the administrative key must only come from the
+// encrypted server environment and must never be bundled into browser code.
 const FALLBACK_URL = "https://hpbjxknfyexhfwktnpyb.supabase.co";
-const FALLBACK_KEY = "sb_secret_ORZbPM6hg5zerYpsyDuS7g_N8gz2oX1";
 
 function env(name: string): string | undefined {
   const value = process.env[name];
@@ -37,7 +37,7 @@ export function resolveAdminCredentials(): {
     const projectId = env("SUPABASE_PROJECT_ID") ?? env("VITE_SUPABASE_PROJECT_ID");
     if (projectId) url = `https://${projectId}.supabase.co`;
   }
-  const key = KEY_NAMES.map(env).find(Boolean) ?? FALLBACK_KEY;
+  const key = KEY_NAMES.map(env).find(Boolean);
   url = url ?? FALLBACK_URL;
   const missing = [...(url ? [] : ["SUPABASE_URL"]), ...(key ? [] : ["SUPABASE_SERVICE_ROLE_KEY"])];
   return { url, key, missing };
