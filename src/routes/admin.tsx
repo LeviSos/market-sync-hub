@@ -291,7 +291,11 @@ function SkinsEditor({ live }: { live: boolean }) {
       <div className="rounded-lg border border-primary/40 bg-primary/5 p-4">
         <h2 className="font-display font-semibold">{t("admin.skin.syncTitle")}</h2>
         <p className="mt-1 max-w-2xl text-xs text-muted-foreground">{t("admin.skin.syncHint")}</p>
-        <button className={primaryBtn + " mt-3 inline-flex items-center gap-2"} disabled={sync.isPending} onClick={() => sync.mutate()}>
+        <button
+          className={primaryBtn + " mt-3 inline-flex items-center gap-2"}
+          disabled={sync.isPending || !live}
+          onClick={() => sync.mutate()}
+        >
           {sync.isPending && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
           {sync.isPending ? t("admin.skin.syncing") : t("admin.skin.sync")}
         </button>
@@ -329,7 +333,7 @@ function SkinsEditor({ live }: { live: boolean }) {
                 onToggle={() => toggle.mutate({ id: it.id, active: !it.is_active })}
               />
             ))}
-            {items.isPending && (
+            {loading && (
               <tr aria-label={t("admin.loading")}>
                 <td colSpan={6} className="space-y-2 py-4">
                   <Skeleton className="h-8 w-full" />
@@ -338,7 +342,7 @@ function SkinsEditor({ live }: { live: boolean }) {
                 </td>
               </tr>
             )}
-            {!items.isPending && rows.length === 0 && (
+            {!loading && rows.length === 0 && (
               <tr>
                 <td colSpan={6} className="py-4 text-xs text-muted-foreground">
                   {items.isError
