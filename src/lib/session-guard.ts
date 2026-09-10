@@ -34,7 +34,8 @@ async function waitForInitialSession() {
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.access_token) finish(session.access_token);
     });
-    const timer = setTimeout(() => finish(null), 1_500);
+    // The persisted session can take a moment to rehydrate on a cold tab.
+    const timer = setTimeout(() => finish(null), 4_000);
     void supabase.auth.getSession().then(({ data }) => {
       if (data.session?.access_token) finish(data.session.access_token);
     });
