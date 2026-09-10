@@ -274,17 +274,26 @@ function SkinsEditor({ live }: { live: boolean }) {
       toast.success(t("admin.skin.overrideSaved"));
       qc.invalidateQueries({ queryKey: ["cms-items"] });
     },
-    onError: (e: Error) => toast.error(e.message || t("admin.saveError")),
+    onError: (e: Error) => {
+      if (e instanceof SessionExpiredError) return;
+      toast.error(e.message || t("admin.saveError"));
+    },
   });
 
   const toggle = useMutation({
     mutationFn: (v: { id: string; active: boolean }) =>
       withFreshSession(t("auth.sessionExpired"), () => cmsToggleItem({ data: v })),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["cms-items"] }),
-    onError: (e: Error) => toast.error(e.message || t("admin.saveError")),
+    onError: (e: Error) => {
+      if (e instanceof SessionExpiredError) return;
+      toast.error(e.message || t("admin.saveError"));
+    },
   });
 
   const rows = items.data ?? [];
+  // Nothing is declared "empty" until the session is confirmed and the first
+  // fetch has actually finished.
+  const loading = !live || items.isPending || items.isFetching;
 
   return (
     <section className="panel space-y-4 p-5">
