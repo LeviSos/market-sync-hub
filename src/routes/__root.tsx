@@ -17,6 +17,7 @@ import { ChatWidget } from "@/components/site/ChatWidget";
 import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider, LanguageSwitcher, useT } from "@/lib/i18n";
 import { captureSteamUserFromUrl } from "@/lib/steam-auth";
+import { MissingSupabaseConfigError } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
   return (
@@ -43,9 +44,39 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  const missingConfig = error instanceof MissingSupabaseConfigError;
+
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
+    if (!missingConfig) reportLovableError(error, { boundary: "tanstack_root_error_component" });
+  }, [error, missingConfig]);
+
+  if (missingConfig) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-4">
+        <div className="max-w-md rounded-2xl border border-border bg-card p-8 text-center shadow-lg">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-xl text-primary">
+            !
+          </div>
+          <h1 className="mt-4 text-xl font-semibold tracking-tight text-foreground">
+            Backend is not connected yet
+          </h1>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            Add the Supabase URL and publishable key in Project Settings → Connectors →
+            Supabase, then reload this page.
+          </p>
+          <p className="mt-3 break-words rounded-lg bg-muted px-3 py-2 font-mono text-xs text-muted-foreground">
+            Missing: {error.missing.join(", ")}
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Перезагрузить
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
