@@ -34,7 +34,8 @@ async function waitForInitialSession() {
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.access_token) finish(session.access_token);
     });
-    const timer = setTimeout(() => finish(null), 1_500);
+    // The persisted session can take a moment to rehydrate on a cold tab.
+    const timer = setTimeout(() => finish(null), 4_000);
     void supabase.auth.getSession().then(({ data }) => {
       if (data.session?.access_token) finish(data.session.access_token);
     });
@@ -73,6 +74,21 @@ export async function requireSession(message: string): Promise<string> {
 
     if (attempt < 3) await sleep(250 * (attempt + 1));
   }
+
+  // Last chance: an authenticated user with a stored session is never treated
+  // as "expired" — one final refresh decides it.
+  try {
+    const { data: userData } = await supabase.auth.getUser();
+    if (userData?.user) {
+      const { data } = await supabase.auth.refreshSession();
+      if (data.session?.access_token) return data.session.access_token;
+      const { data: current } = await supabase.auth.getSession();
+      if (current.session?.access_token) return current.session.access_token;
+    }
+  } catch {
+    /* fall through to the expiry error */
+  }
+
   throw new SessionExpiredError(message);
 }
 

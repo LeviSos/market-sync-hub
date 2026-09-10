@@ -17,7 +17,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { SessionExpiredError, withFreshSession } from "@/lib/session-guard";
 import { Skeleton } from "@/components/ui/skeleton";
 
-
 import {
   amIStaff,
   adminStats,
@@ -220,7 +219,6 @@ function Overview({ live }: { live: boolean }) {
 
 /* --------------------------------- skins --------------------------------- */
 
-
 function SkinsEditor({ live }: { live: boolean }) {
   const t = useT();
   const qc = useQueryClient();
@@ -236,8 +234,7 @@ function SkinsEditor({ live }: { live: boolean }) {
     enabled: live,
     // The Supabase client may still be restoring the session on first mount,
     // so give an auth failure one silent retry before surfacing an error.
-    retry: (count, e: Error) =>
-      count < 2 && /session|unauthor|401/i.test(e?.message ?? ""),
+    retry: (count, e: Error) => count < 2 && /session|unauthor|401/i.test(e?.message ?? ""),
     retryDelay: 400,
     staleTime: 5_000,
   });
@@ -258,40 +255,55 @@ function SkinsEditor({ live }: { live: boolean }) {
 
   const saveOverride = useMutation({
     mutationFn: (v: { row: ItemRow; override: number | null }) =>
-      withFreshSession(t("auth.sessionExpired"), () => cmsSaveItem({
-        data: {
-          id: v.row.id,
-          name: v.row.name,
-          rarity: v.row.rarity,
-          weapon: v.row.weapon,
-          image_url: v.row.image_url,
-          base_price: Number(v.row.base_price) || 0,
-          price_override: v.override,
-          is_active: v.row.is_active,
-        },
-      })),
+      withFreshSession(t("auth.sessionExpired"), () =>
+        cmsSaveItem({
+          data: {
+            id: v.row.id,
+            name: v.row.name,
+            rarity: v.row.rarity,
+            weapon: v.row.weapon,
+            image_url: v.row.image_url,
+            base_price: Number(v.row.base_price) || 0,
+            price_override: v.override,
+            is_active: v.row.is_active,
+          },
+        }),
+      ),
     onSuccess: () => {
       toast.success(t("admin.skin.overrideSaved"));
       qc.invalidateQueries({ queryKey: ["cms-items"] });
     },
-    onError: (e: Error) => toast.error(e.message || t("admin.saveError")),
+    onError: (e: Error) => {
+      if (e instanceof SessionExpiredError) return;
+      toast.error(e.message || t("admin.saveError"));
+    },
   });
 
   const toggle = useMutation({
     mutationFn: (v: { id: string; active: boolean }) =>
       withFreshSession(t("auth.sessionExpired"), () => cmsToggleItem({ data: v })),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["cms-items"] }),
-    onError: (e: Error) => toast.error(e.message || t("admin.saveError")),
+    onError: (e: Error) => {
+      if (e instanceof SessionExpiredError) return;
+      toast.error(e.message || t("admin.saveError"));
+    },
   });
 
   const rows = items.data ?? [];
+  // Nothing is declared "empty" until the session is confirmed and the first
+  // fetch has actually finished.
+  const loading = !live || items.isPending || items.isFetching;
 
   return (
     <section className="panel space-y-4 p-5">
       <div className="rounded-lg border border-primary/40 bg-primary/5 p-4">
         <h2 className="font-display font-semibold">{t("admin.skin.syncTitle")}</h2>
         <p className="mt-1 max-w-2xl text-xs text-muted-foreground">{t("admin.skin.syncHint")}</p>
-        <button className={primaryBtn + " mt-3 inline-flex items-center gap-2"} disabled={sync.isPending} onClick={() => sync.mutate()}>
+        <button
+          className={primaryBtn + " mt-3 inline-flex items-center gap-2"}
+          disabled={sync.isPending || !live}
+          onClick={() => sync.mutate()}
+        >
           {sync.isPending && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
           {sync.isPending ? t("admin.skin.syncing") : t("admin.skin.sync")}
         </button>
@@ -329,7 +341,7 @@ function SkinsEditor({ live }: { live: boolean }) {
                 onToggle={() => toggle.mutate({ id: it.id, active: !it.is_active })}
               />
             ))}
-            {items.isPending && (
+            {loading && (
               <tr aria-label={t("admin.loading")}>
                 <td colSpan={6} className="space-y-2 py-4">
                   <Skeleton className="h-8 w-full" />
@@ -338,14 +350,14 @@ function SkinsEditor({ live }: { live: boolean }) {
                 </td>
               </tr>
             )}
-            {!items.isPending && rows.length === 0 && (
+            {!loading && rows.length === 0 && (
               <tr>
                 <td colSpan={6} className="py-4 text-xs text-muted-foreground">
                   {items.isError
                     ? t("admin.empty")
                     : search.trim()
-                        ? t("admin.empty")
-                        : t("admin.skin.dbEmpty")}
+                      ? t("admin.empty")
+                      : t("admin.skin.dbEmpty")}
                 </td>
               </tr>
             )}
@@ -404,7 +416,9 @@ function SkinLine({
           </button>
         </div>
       </td>
-      <td className="text-xs text-muted-foreground">{row.is_active ? t("admin.skin.active") : "—"}</td>
+      <td className="text-xs text-muted-foreground">
+        {row.is_active ? t("admin.skin.active") : "—"}
+      </td>
       <td className="py-2 text-right">
         <button className={ghost} onClick={onToggle}>
           {row.is_active ? "Off" : "On"}
@@ -413,7 +427,6 @@ function SkinLine({
     </tr>
   );
 }
-
 
 function Field({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -436,13 +449,7 @@ const emptyCase = {
 };
 
 /** Drag & drop (or pick) a PNG cover — stored in the private covers bucket. */
-function CoverPicker({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-}) {
+function CoverPicker({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const t = useT();
   const [busy, setBusy] = useState(false);
   const [over, setOver] = useState(false);
@@ -519,7 +526,6 @@ function CoverPicker({
     </div>
   );
 }
-
 
 function CasesEditor({ live }: { live: boolean }) {
   const t = useT();
@@ -1322,14 +1328,10 @@ function ChatPanel({ live, localMode }: { live: boolean; localMode: boolean }) {
     if (!live) return;
     const channel = supabase
       .channel("admin-chat-live")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "chat_messages" },
-        () => {
-          qc.invalidateQueries({ queryKey: ["admin-chat"] });
-          qc.invalidateQueries({ queryKey: ["chat"] });
-        },
-      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "chat_messages" }, () => {
+        qc.invalidateQueries({ queryKey: ["admin-chat"] });
+        qc.invalidateQueries({ queryKey: ["chat"] });
+      })
       .subscribe();
     return () => {
       void supabase.removeChannel(channel);
