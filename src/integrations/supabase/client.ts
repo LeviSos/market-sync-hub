@@ -40,6 +40,8 @@ export class MissingSupabaseConfigError extends Error {
   }
 }
 
+const DEFAULT_SUPABASE_URL = 'https://hpbjxknfyexhfwktnpyb.supabase.co';
+
 function readServerEnv(name: string): string | undefined {
   return typeof process === 'undefined' ? undefined : process.env[name];
 }
@@ -48,20 +50,18 @@ export function getSupabaseConfig():
   | { ok: true; url: string; key: string }
   | { ok: false; missing: string[] } {
   // VITE_* is read first in the browser. SUPABASE_* remains available for SSR.
-  const url = import.meta.env['VITE_SUPABASE_URL'] || readServerEnv('SUPABASE_URL');
+  const url =
+    import.meta.env['VITE_SUPABASE_URL'] || readServerEnv('SUPABASE_URL') || DEFAULT_SUPABASE_URL;
   const key =
+    readServerEnv('SUPABASE_ANON_KEY') ||
     import.meta.env['VITE_SUPABASE_ANON_KEY'] ||
     import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] ||
-    readServerEnv('SUPABASE_PUBLISHABLE_KEY') ||
-    readServerEnv('SUPABASE_ANON_KEY');
+    readServerEnv('SUPABASE_PUBLISHABLE_KEY');
 
-  if (!url || !key) {
+  if (!key) {
     return {
       ok: false,
-      missing: [
-        ...(!url ? ['VITE_SUPABASE_URL'] : []),
-        ...(!key ? ['VITE_SUPABASE_ANON_KEY'] : []),
-      ],
+      missing: ['SUPABASE_ANON_KEY'],
     };
   }
 
